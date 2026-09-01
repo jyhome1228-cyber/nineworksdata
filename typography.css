@@ -1,0 +1,472 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+
+:root {
+  --container: 1440px;
+  --fs-display: clamp(36px, 3.8vw, 50px);
+  --fs-h1: clamp(34px, 3.5vw, 46px);
+  --fs-h2: clamp(26px, 2.25vw, 34px);
+  --fs-h3: clamp(22px, 1.8vw, 28px);
+  --fs-body-lg: 18px;
+  --fs-body: 17px;
+  --fs-body-sm: 16px;
+  --fs-label: 14px;
+  --fs-meta: 12px;
+  --section-xl: 112px;
+  --section-lg: 88px;
+  --section-md: 64px;
+  --sost-line: 1.7;
+  --sost-track: -0.022em;
+  --sans: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* SOST LABS inspired hierarchy — keep the dark HUD system, fix readability. */
+body {
+  font-family: var(--sans);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: var(--sost-line);
+  letter-spacing: var(--sost-track);
+  word-break: keep-all;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: var(--sans);
+  letter-spacing: inherit;
+}
+
+/* Monospace is reserved for data/system metadata only. */
+.mono,
+kbd,
+code,
+pre {
+  font-family: 'SFMono-Regular', 'SF Mono', 'Roboto Mono', Consolas, monospace;
+  letter-spacing: 0.035em;
+}
+
+/* Header */
+.brand {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.015em;
+}
+
+.brand b {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.system,
+.clock {
+  font-size: 12px;
+}
+
+.ghost {
+  min-height: 38px;
+  padding-inline: 14px;
+  font-size: 13px;
+  font-weight: 510;
+  letter-spacing: 0.045em;
+}
+
+/* Navigation */
+.nav-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.nav-item {
+  height: 46px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.nav-item span {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+.sidebar-foot span,
+.sidebar-foot small {
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.sidebar-foot strong {
+  margin: 7px 0 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Page rhythm */
+.view {
+  padding-top: 56px;
+  padding-bottom: 88px;
+}
+
+.hero {
+  min-height: 280px;
+  padding-bottom: 48px;
+}
+
+.eyebrow,
+.kicker {
+  font-family: var(--sans);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.11em;
+}
+
+.hero h1 {
+  max-width: 720px;
+  margin-top: 24px;
+  font-size: var(--fs-display);
+  font-weight: 470;
+  line-height: 1.12;
+  letter-spacing: -0.047em;
+}
+
+.page-head h1 {
+  margin-top: 22px;
+  font-size: var(--fs-h1);
+  font-weight: 470;
+  line-height: 1.16;
+  letter-spacing: -0.045em;
+}
+
+.hero-copy {
+  max-width: 690px;
+  margin-top: 28px;
+  color: #9db8bd;
+  font-size: var(--fs-body-lg);
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: -0.022em;
+}
+
+.page-head {
+  min-height: 170px;
+  padding-bottom: 42px;
+}
+
+.page-count,
+.live {
+  font-size: 13px;
+}
+
+/* Metrics */
+.metrics article {
+  min-height: 148px;
+  padding: 28px 24px;
+}
+
+.metrics strong {
+  font-size: clamp(38px, 3.2vw, 48px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.055em;
+}
+
+.metrics span {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.055em;
+}
+
+/* Project matrix heading */
+.board-head {
+  margin-top: 56px;
+  margin-bottom: 26px;
+}
+
+.board-head h2 {
+  margin-top: 12px;
+  font-size: var(--fs-h2);
+  font-weight: 510;
+  line-height: 1.3;
+  letter-spacing: -0.038em;
+}
+
+.search {
+  min-width: 280px;
+  height: 42px;
+  padding-inline: 14px;
+}
+
+.search input {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Project cards — retain 5–7 column matrix but make every card readable. */
+.project-grid {
+  gap: 14px;
+}
+
+.project-card {
+  min-height: 248px;
+  padding: 22px 20px;
+}
+
+.card-state {
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.card-index {
+  font-size: 12px;
+}
+
+.project-card h3 {
+  margin: 28px 0 14px;
+  font-size: 22px;
+  font-weight: 540;
+  line-height: 1.28;
+  letter-spacing: -0.03em;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.card-desc {
+  min-height: 76px;
+  margin: 0;
+  color: #8ea9ae;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.62;
+  letter-spacing: -0.022em;
+  -webkit-line-clamp: 3;
+}
+
+.card-meta {
+  gap: 7px;
+  margin-top: 20px;
+}
+
+.chip {
+  padding: 5px 8px;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.card-foot {
+  margin-top: 18px;
+  padding-top: 14px;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+/* Filters */
+.filter-row {
+  margin: 30px 0 26px;
+}
+
+.segments {
+  gap: 8px;
+}
+
+.segments button {
+  height: 40px;
+  padding-inline: 14px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.045em;
+}
+
+/* Activity / repository rows */
+.activity-feed,
+.repo-list {
+  margin-top: 32px;
+}
+
+.activity-row,
+.repo-row {
+  min-height: 76px;
+  padding: 10px 20px;
+}
+
+.activity-row span,
+.repo-row span {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.activity-row strong,
+.repo-row strong {
+  font-size: 16px;
+  font-weight: 510;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+}
+
+/* Inspector drawer */
+.drawer {
+  width: min(680px, 94vw);
+}
+
+.drawer-head {
+  padding: 30px 30px 26px;
+}
+
+.drawer-head h2 {
+  margin-top: 10px;
+  font-size: var(--fs-h2);
+  font-weight: 510;
+  line-height: 1.25;
+  letter-spacing: -0.038em;
+}
+
+.drawer-body {
+  padding: 30px;
+}
+
+.detail-grid div {
+  padding: 18px;
+}
+
+.detail-grid span {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+.detail-grid strong {
+  margin-top: 8px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.drawer-section {
+  margin-top: 22px;
+  padding: 24px;
+}
+
+.drawer-section h3 {
+  margin-bottom: 16px;
+  font-size: 22px;
+  font-weight: 540;
+  line-height: 1.35;
+  letter-spacing: -0.03em;
+}
+
+.drawer-section p {
+  color: #93afb4;
+  font-size: 16px;
+  line-height: 1.7;
+  letter-spacing: -0.022em;
+}
+
+.project-form {
+  gap: 14px;
+}
+
+.project-form label {
+  gap: 8px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+}
+
+.project-form textarea,
+.project-form input,
+.project-form select {
+  padding: 13px 14px;
+  font-size: 16px;
+  line-height: 1.6;
+  letter-spacing: -0.02em;
+}
+
+.project-form textarea {
+  min-height: 180px;
+}
+
+.saved {
+  font-size: 12px;
+}
+
+.commit {
+  padding: 14px 0;
+}
+
+.commit strong {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.commit span {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Command palette */
+.command-box {
+  width: min(760px, 92vw);
+}
+
+.command-input {
+  padding: 17px 20px;
+}
+
+.command-input input {
+  font-size: 17px;
+}
+
+.command-results button {
+  padding: 15px 20px;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+/* Keep density on very wide screens without returning to micro typography. */
+@media (min-width: 1700px) {
+  .project-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .project-card h3 { font-size: 21px; }
+  .card-desc { font-size: 15px; }
+}
+
+@media (min-width: 1450px) and (max-width: 1699px) {
+  .project-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1180px) and (max-width: 1449px) {
+  .project-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  body { font-size: 16px; }
+  .view { padding: 40px 20px 72px; }
+  .hero { min-height: 0; padding: 48px 0 40px; }
+  .hero h1 { font-size: clamp(32px, 9.5vw, 40px); }
+  .page-head h1 { font-size: clamp(30px, 9vw, 38px); }
+  .board-head h2 { font-size: clamp(24px, 7.5vw, 30px); }
+  .hero-copy { font-size: 16px; }
+  .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .project-card { min-height: 230px; padding: 20px 18px; }
+  .project-card h3 { font-size: 20px; }
+  .card-desc { font-size: 15px; }
+}
+
+@media (max-width: 560px) {
+  .view { padding-inline: 16px; }
+  .project-grid { grid-template-columns: 1fr; }
+  .project-card { min-height: 0; }
+  .project-card h3 { font-size: 22px; }
+  .card-desc { min-height: 0; font-size: 16px; }
+  .drawer-head,
+  .drawer-body { padding-inline: 20px; }
+}
