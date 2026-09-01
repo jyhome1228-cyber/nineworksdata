@@ -3,190 +3,209 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#080808" />
+  <meta name="theme-color" content="#070707" />
+  <meta name="color-scheme" content="dark" />
   <title>9W // CONTROL</title>
-  <meta name="description" content="9W Studio Development Console" />
+  <meta name="description" content="9W GitHub project control center" />
+  <link rel="preconnect" href="https://api.github.com" />
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <div class="noise" aria-hidden="true"></div>
+  <div class="boot-screen" id="bootScreen" aria-hidden="true">
+    <div class="boot-lockup mono">
+      <strong>9W // CONTROL</strong>
+      <span id="bootText">INITIALIZING GITHUB ADAPTER...</span>
+      <i></i>
+    </div>
+  </div>
 
   <div class="app-shell">
     <header class="topbar">
-      <a class="brand" href="#" aria-label="9W Control home">
-        <span class="brand-mark">9W</span>
-        <span class="brand-divider">//</span>
-        <span>CONTROL</span>
-      </a>
+      <button class="brand" type="button" data-route="dashboard" aria-label="Dashboard">
+        <span class="brand-mark">9W</span><span class="brand-divider">//</span><span>CONTROL</span>
+      </button>
 
-      <div class="topbar-center mono">
+      <div class="topbar-status mono">
         <span class="system-dot is-online"></span>
         <span>SYSTEM ONLINE</span>
-        <span class="topbar-separator">/</span>
+        <span class="separator">/</span>
         <span id="githubStatus">GITHUB CONNECTING</span>
       </div>
 
       <div class="topbar-actions">
-        <button class="command-trigger" id="commandTrigger" type="button">
-          <span>COMMAND</span>
-          <kbd>⌘ K</kbd>
-        </button>
-        <div class="clock mono" id="clock">--:-- KST</div>
+        <button class="icon-button mobile-nav-trigger" id="mobileNavTrigger" type="button" aria-label="메뉴 열기">MENU</button>
+        <button class="command-trigger" id="commandTrigger" type="button"><span>COMMAND</span><kbd>⌘ K</kbd></button>
+        <span class="clock mono" id="clock">--:-- KST</span>
       </div>
     </header>
 
-    <aside class="sidebar">
-      <nav class="nav" aria-label="Primary">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-scroll">
         <div class="nav-label mono">WORKSPACE</div>
-        <button class="nav-item active" data-view="overview"><span>01</span>OVERVIEW</button>
-        <button class="nav-item" data-view="projects"><span>02</span>PROJECTS</button>
-        <button class="nav-item" data-view="repositories"><span>03</span>REPOSITORIES</button>
-        <button class="nav-item" data-view="activity"><span>04</span>ACTIVITY</button>
-        <button class="nav-item" data-view="deployments"><span>05</span>DEPLOYMENTS</button>
-        <button class="nav-item" data-view="issues"><span>06</span>ISSUES</button>
-      </nav>
+        <nav class="nav" aria-label="Primary">
+          <button class="nav-item active" type="button" data-route="dashboard"><span>01</span><b>OVERVIEW</b></button>
+          <button class="nav-item" type="button" data-route="projects"><span>02</span><b>PROJECTS</b><em id="navProjectCount">--</em></button>
+          <button class="nav-item" type="button" data-route="repositories"><span>03</span><b>REPOSITORIES</b></button>
+          <button class="nav-item" type="button" data-route="activity"><span>04</span><b>ACTIVITY</b></button>
+          <button class="nav-item" type="button" data-route="deployments"><span>05</span><b>DEPLOYMENTS</b></button>
+          <button class="nav-item" type="button" data-route="issues"><span>06</span><b>ISSUES</b></button>
+        </nav>
+
+        <div class="nav-label mono nav-label-spaced">TOOLS</div>
+        <nav class="nav" aria-label="Secondary">
+          <button class="nav-item" type="button" data-route="search"><span>CMD</span><b>GLOBAL SEARCH</b></button>
+          <button class="nav-item" type="button" data-route="settings"><span>SET</span><b>SETTINGS</b></button>
+        </nav>
+      </div>
 
       <div class="sidebar-bottom">
         <div class="connection-card">
-          <div class="connection-head mono">
-            <span>GITHUB</span>
-            <span class="status-pill" id="connectionPill">SYNC</span>
-          </div>
+          <div class="connection-head mono"><span>GITHUB</span><span class="status-pill" id="connectionPill">SYNC</span></div>
           <strong id="githubOwner">jyhome1228-cyber</strong>
           <span class="muted mono" id="syncText">fetching repositories...</span>
         </div>
-        <button class="nav-item compact" data-view="settings"><span>SET</span>SETTINGS</button>
       </div>
     </aside>
 
-    <main class="main">
-      <section class="hero-grid">
-        <div>
-          <p class="eyebrow mono">STUDIO DEVELOPMENT SYSTEM / v0.1</p>
-          <h1>CONTROL<br />EVERYTHING.</h1>
+    <main class="main" id="mainContent">
+      <!-- DASHBOARD -->
+      <section class="view active" data-view="dashboard">
+        <div class="page-head dashboard-head">
+          <div>
+            <p class="eyebrow mono">STUDIO DEVELOPMENT SYSTEM / GITHUB CONTROL</p>
+            <h1>CONTROL<br />EVERYTHING.</h1>
+          </div>
+          <div class="page-head-meta mono">
+            <div><span>DATE</span><strong id="dateLabel">----</strong></div>
+            <div><span>ACCOUNT</span><strong>JYHOME1228-CYBER</strong></div>
+            <div><span>ENVIRONMENT</span><strong>PRODUCTION</strong></div>
+          </div>
         </div>
-        <div class="hero-meta mono">
-          <div><span>DATE</span><strong id="dateLabel">----</strong></div>
-          <div><span>ACCOUNT</span><strong>JYHOME1228-CYBER</strong></div>
-          <div><span>ENV</span><strong>PRODUCTION</strong></div>
-        </div>
+
+        <section class="metrics-grid" aria-label="GitHub metrics">
+          <article class="metric"><span class="metric-index mono">01</span><strong id="repoCount">--</strong><span>REPOSITORIES</span><small id="repoMeta">SYNCING</small></article>
+          <article class="metric"><span class="metric-index mono">02</span><strong id="activeCount">--</strong><span>ACTIVE / 30D</span><small id="activeMeta">RECENT PUSH</small></article>
+          <article class="metric"><span class="metric-index mono">03</span><strong id="issueCount">--</strong><span>OPEN ITEMS</span><small>ISSUES + PR SIGNAL</small></article>
+          <article class="metric"><span class="metric-index mono">04</span><strong id="languageCount">--</strong><span>LANGUAGES</span><small id="languageMeta">CODEBASE MIX</small></article>
+        </section>
+
+        <section class="dashboard-grid">
+          <article class="panel repo-panel span-8">
+            <div class="panel-head">
+              <div><span class="panel-kicker mono">LIVE INDEX</span><h2>RECENT REPOSITORIES</h2></div>
+              <button class="text-button mono" type="button" data-route="repositories">VIEW ALL ↗</button>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table repo-table">
+                <thead class="mono"><tr><th>PROJECT</th><th>BRANCH</th><th>STATE</th><th>LANG</th><th>UPDATED</th><th></th></tr></thead>
+                <tbody id="dashboardRepoBody"><tr class="loading-row"><td colspan="6">&gt; fetching github repositories...</td></tr></tbody>
+              </table>
+            </div>
+          </article>
+
+          <aside class="panel activity-panel span-4">
+            <div class="panel-head simple">
+              <div><span class="panel-kicker mono">PUBLIC EVENT STREAM</span><h2>ACTIVITY</h2></div>
+              <span class="live-label mono"><i></i>LIVE</span>
+            </div>
+            <div class="activity-list" id="dashboardActivity"><div class="activity-empty mono">awaiting github data...</div></div>
+          </aside>
+
+          <article class="panel span-7 intelligence-panel">
+            <div class="panel-head simple"><div><span class="panel-kicker mono">CODEBASE</span><h2>REPOSITORY INTELLIGENCE</h2></div><span class="panel-code mono">AUTO</span></div>
+            <div class="language-bars" id="languageBars"><div class="empty-state mono">analyzing repository languages...</div></div>
+          </article>
+
+          <article class="panel span-5 system-panel">
+            <div class="panel-head simple"><div><span class="panel-kicker mono">HEALTH</span><h2>SYSTEM STATUS</h2></div><span class="panel-code mono">09W</span></div>
+            <div class="system-list mono">
+              <div><span><i class="status-led ok"></i>GITHUB API</span><strong id="apiHealth">CONNECTING</strong></div>
+              <div><span><i class="status-led ok"></i>REPOSITORY INDEX</span><strong id="indexHealth">WAITING</strong></div>
+              <div><span><i class="status-led"></i>PRIVATE ACCESS</span><strong>NOT CONFIGURED</strong></div>
+              <div><span><i class="status-led"></i>WEBHOOK</span><strong>PHASE 02</strong></div>
+            </div>
+          </article>
+        </section>
+
+        <section class="terminal-panel">
+          <div class="terminal-head mono"><span>9W://CONTROL/CONSOLE</span><span>READY</span></div>
+          <div class="terminal-lines mono" id="terminalLines">
+            <p><span class="prompt">&gt;</span> booting workspace...</p>
+            <p><span class="prompt">&gt;</span> github adapter initialized</p>
+          </div>
+        </section>
       </section>
 
-      <section class="metrics-grid" aria-label="Repository metrics">
-        <article class="metric">
-          <span class="metric-index mono">01</span>
-          <strong id="repoCount">--</strong>
-          <span>REPOSITORIES</span>
-        </article>
-        <article class="metric">
-          <span class="metric-index mono">02</span>
-          <strong id="activeCount">--</strong>
-          <span>ACTIVE / 30D</span>
-        </article>
-        <article class="metric">
-          <span class="metric-index mono">03</span>
-          <strong id="issueCount">--</strong>
-          <span>OPEN ITEMS</span>
-        </article>
-        <article class="metric">
-          <span class="metric-index mono">04</span>
-          <strong id="forkCount">--</strong>
-          <span>FORKS</span>
-        </article>
+      <!-- PROJECTS -->
+      <section class="view" data-view="projects">
+        <div class="page-head compact-head"><div><p class="eyebrow mono">02 / PROJECT INDEX</p><h1>PROJECTS.</h1><p class="page-description">최근 활동을 기준으로 GitHub 저장소를 운영 프로젝트처럼 정리합니다.</p></div><div class="page-stat mono"><strong id="projectsStat">--</strong><span>TRACKED</span></div></div>
+        <div class="filter-bar"><div class="segmented" id="projectFilters"><button class="active" data-filter="all">ALL</button><button data-filter="active">ACTIVE</button><button data-filter="idle">IDLE</button><button data-filter="archived">ARCHIVED</button></div><label class="search-box mono"><span>/</span><input id="projectSearch" type="search" placeholder="SEARCH PROJECT" autocomplete="off" /></label></div>
+        <div class="project-list" id="projectList"><div class="empty-state mono">loading project index...</div></div>
       </section>
 
-      <section class="workspace-grid">
-        <div class="panel repo-panel">
-          <div class="panel-head">
-            <div>
-              <span class="panel-kicker mono">LIVE INDEX</span>
-              <h2>REPOSITORIES</h2>
-            </div>
-            <div class="panel-tools">
-              <label class="search-box mono">
-                <span>/</span>
-                <input id="repoSearch" type="search" placeholder="FILTER REPOSITORIES" autocomplete="off" />
-              </label>
-              <button class="text-button mono" id="refreshButton" type="button">REFRESH ↻</button>
-            </div>
-          </div>
-
-          <div class="table-wrap">
-            <table class="repo-table">
-              <thead class="mono">
-                <tr>
-                  <th>PROJECT</th>
-                  <th>BRANCH</th>
-                  <th>STATUS</th>
-                  <th>LANGUAGE</th>
-                  <th>UPDATED</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="repoTableBody">
-                <tr class="loading-row"><td colspan="6">&gt; fetching github repositories...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <aside class="panel activity-panel">
-          <div class="panel-head simple">
-            <div>
-              <span class="panel-kicker mono">STREAM</span>
-              <h2>ACTIVITY</h2>
-            </div>
-            <span class="live-label mono"><i></i>LIVE</span>
-          </div>
-          <div class="activity-list" id="activityList">
-            <div class="activity-empty mono">awaiting github data...</div>
-          </div>
-        </aside>
+      <!-- REPOSITORIES -->
+      <section class="view" data-view="repositories">
+        <div class="page-head compact-head"><div><p class="eyebrow mono">03 / SOURCE CONTROL</p><h1>REPOSITORIES.</h1><p class="page-description">브랜치, 언어, 최근 push, 공개/비공개 상태를 한곳에서 확인합니다.</p></div><button class="outline-button mono" id="refreshButton" type="button">SYNC GITHUB ↻</button></div>
+        <div class="filter-bar"><label class="search-box wide mono"><span>/</span><input id="repoSearch" type="search" placeholder="FILTER NAME, LANGUAGE, BRANCH..." autocomplete="off" /></label><span class="results-label mono" id="repoResults">-- RESULTS</span></div>
+        <article class="panel flush-panel"><div class="table-wrap tall"><table class="data-table repo-table"><thead class="mono"><tr><th>REPOSITORY</th><th>VISIBILITY</th><th>BRANCH</th><th>LANGUAGE</th><th>OPEN</th><th>UPDATED</th><th></th></tr></thead><tbody id="repoTableBody"><tr class="loading-row"><td colspan="7">&gt; syncing repositories...</td></tr></tbody></table></div></article>
       </section>
 
-      <section class="terminal-panel">
-        <div class="terminal-head mono">
-          <span>9W://CONTROL/CONSOLE</span>
-          <span>READY</span>
-        </div>
-        <div class="terminal-lines mono" id="terminalLines">
-          <p><span class="prompt">&gt;</span> booting workspace...</p>
-          <p><span class="prompt">&gt;</span> github adapter initialized</p>
-          <p class="terminal-muted"><span class="prompt">&gt;</span> type command with <kbd>⌘ K</kbd></p>
+      <!-- ACTIVITY -->
+      <section class="view" data-view="activity">
+        <div class="page-head compact-head"><div><p class="eyebrow mono">04 / EVENT STREAM</p><h1>ACTIVITY.</h1><p class="page-description">Push, repository 생성, PR, issue 등 공개 GitHub 이벤트를 시간순으로 표시합니다.</p></div><span class="live-label large mono"><i></i>LIVE FEED</span></div>
+        <div class="activity-feed" id="activityFeed"><div class="empty-state mono">waiting for event stream...</div></div>
+      </section>
+
+      <!-- DEPLOYMENTS -->
+      <section class="view" data-view="deployments">
+        <div class="page-head compact-head"><div><p class="eyebrow mono">05 / DELIVERY</p><h1>DEPLOYMENTS.</h1><p class="page-description">GitHub Actions 워크플로가 있는 저장소의 최근 실행 상태를 필요할 때 조회합니다.</p></div><button class="outline-button mono" id="loadDeployments" type="button">SCAN ACTIONS</button></div>
+        <div class="notice mono"><span>!</span><p><strong>ON-DEMAND SCAN</strong> GitHub API 사용량을 줄이기 위해 Actions 데이터는 이 화면에서 요청할 때만 불러옵니다.</p></div>
+        <div class="deployment-list" id="deploymentList"><div class="empty-state mono">&gt; press SCAN ACTIONS to inspect recent workflow runs</div></div>
+      </section>
+
+      <!-- ISSUES -->
+      <section class="view" data-view="issues">
+        <div class="page-head compact-head"><div><p class="eyebrow mono">06 / WORK ITEMS</p><h1>ISSUES.</h1><p class="page-description">저장소별 open item 신호를 우선 보여주고, 상세 issue 데이터는 선택적으로 조회합니다.</p></div><button class="outline-button mono" id="loadIssues" type="button">LOAD ISSUES</button></div>
+        <div class="issue-summary" id="issueSummary"></div>
+        <article class="panel flush-panel"><div class="issue-list" id="issueList"><div class="empty-state mono">&gt; press LOAD ISSUES to fetch recent open issues</div></div></article>
+      </section>
+
+      <!-- SEARCH -->
+      <section class="view" data-view="search">
+        <div class="page-head compact-head"><div><p class="eyebrow mono">CMD / GLOBAL INDEX</p><h1>SEARCH.</h1><p class="page-description">현재 동기화된 repository와 activity를 즉시 검색합니다.</p></div></div>
+        <label class="global-search"><span class="mono">&gt;</span><input id="globalSearchInput" type="search" placeholder="type repository, language, event..." autocomplete="off" /></label>
+        <div class="search-results" id="globalSearchResults"><div class="empty-state mono">start typing to search the workspace index</div></div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="view" data-view="settings">
+        <div class="page-head compact-head"><div><p class="eyebrow mono">SET / CONFIGURATION</p><h1>SETTINGS.</h1><p class="page-description">현재는 공개 GitHub API 모드입니다. Private repository 및 write 기능은 GitHub App 백엔드를 붙이는 Phase 02에서 활성화합니다.</p></div></div>
+        <div class="settings-grid">
+          <article class="panel setting-card"><span class="panel-kicker mono">ACCOUNT</span><h3>GitHub Source</h3><dl class="mono"><div><dt>OWNER</dt><dd>jyhome1228-cyber</dd></div><div><dt>MODE</dt><dd id="settingsMode">PUBLIC API</dd></div><div><dt>STATUS</dt><dd id="settingsStatus">CONNECTING</dd></div></dl><a class="outline-button mono inline-button" href="https://github.com/jyhome1228-cyber" target="_blank" rel="noreferrer">OPEN GITHUB ↗</a></article>
+          <article class="panel setting-card"><span class="panel-kicker mono">PHASE 02</span><h3>Authenticated Control</h3><p>GitHub App을 백엔드에 연결하면 private repo, commit, branch, PR, issue, Actions 재실행까지 이 콘솔에서 직접 제어할 수 있습니다.</p><div class="roadmap mono"><span>PRIVATE REPOS</span><span>FILE EDIT</span><span>COMMIT</span><span>PR</span><span>ACTIONS</span></div></article>
+          <article class="panel setting-card dangerless"><span class="panel-kicker mono">SECURITY</span><h3>No token in browser.</h3><p>Personal Access Token을 프론트엔드 코드나 localStorage에 저장하지 않습니다. 인증 키는 서버 측 GitHub App에서만 관리하는 구조로 확장합니다.</p></article>
         </div>
       </section>
     </main>
   </div>
 
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+  <aside class="repo-drawer" id="repoDrawer" aria-hidden="true">
+    <div class="drawer-head"><div><span class="panel-kicker mono">REPOSITORY INSPECTOR</span><h2 id="drawerRepoName">REPOSITORY</h2></div><button class="drawer-close mono" id="drawerClose" type="button">ESC</button></div>
+    <div class="drawer-body" id="drawerBody"><div class="empty-state mono">select a repository</div></div>
+  </aside>
+
   <div class="command-overlay" id="commandOverlay" aria-hidden="true">
     <div class="command-modal" role="dialog" aria-modal="true" aria-labelledby="commandTitle">
-      <div class="command-input-wrap">
-        <span class="command-prompt mono">&gt;</span>
-        <input id="commandInput" aria-label="Command search" autocomplete="off" placeholder="Search repositories or run a command..." />
-        <kbd>ESC</kbd>
-      </div>
-      <div class="command-results" id="commandResults">
-        <div class="command-section-label mono" id="commandTitle">COMMANDS</div>
-        <button data-command="refresh"><span>Refresh GitHub data</span><em class="mono">R</em></button>
-        <button data-command="recent"><span>Show recently updated</span><em class="mono">↵</em></button>
-        <button data-command="github"><span>Open GitHub profile</span><em class="mono">↗</em></button>
-      </div>
+      <div class="command-input-wrap"><span class="command-prompt mono">&gt;</span><input id="commandInput" autocomplete="off" placeholder="Search repository or run command..." /><kbd>ESC</kbd></div>
+      <div class="command-results" id="commandResults"><div class="command-section-label mono" id="commandTitle">COMMANDS</div></div>
     </div>
   </div>
 
   <template id="repoRowTemplate">
-    <tr>
-      <td>
-        <div class="repo-name-cell">
-          <span class="repo-status-dot"></span>
-          <div><strong class="repo-name"></strong><span class="repo-description"></span></div>
-        </div>
-      </td>
-      <td class="repo-branch mono"></td>
-      <td><span class="repo-state mono"></span></td>
-      <td class="repo-language mono"></td>
-      <td class="repo-updated mono"></td>
-      <td><a class="repo-open mono" target="_blank" rel="noreferrer">OPEN ↗</a></td>
+    <tr class="repo-row">
+      <td><button class="repo-name-button" type="button"><span class="repo-status-dot"></span><span><strong class="repo-name"></strong><small class="repo-description"></small></span></button></td>
+      <td class="repo-visibility mono"></td><td class="repo-branch mono"></td><td class="repo-language mono"></td><td class="repo-open-count mono"></td><td class="repo-updated mono"></td><td><a class="repo-open mono" target="_blank" rel="noreferrer">OPEN ↗</a></td>
     </tr>
   </template>
 
