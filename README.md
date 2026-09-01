@@ -1,77 +1,116 @@
 # 9W // CONTROL
 
-Studio Development Console prototype for managing the `jyhome1228-cyber` GitHub workspace.
+Studio Development Console for `jyhome1228-cyber`.
+
+A black developer-style control center that turns GitHub repository data into a studio operations dashboard.
 
 ## Current build
 
-- Dark terminal / developer console UI
-- Live public repository index from GitHub REST API
-- Repository status based on recent push activity
-- Repository search
-- Public GitHub activity stream
-- `⌘ K` / `Ctrl K` command palette
-- Direct repository links
-- KST system clock
+The app opens directly into the **Overview Dashboard** and synchronizes public GitHub data at runtime.
 
-## Run
+### Dashboard
+- Repository count
+- Active repositories in the last 30 days
+- Open item signal from repository metadata
+- Language mix
+- Recently updated repositories
+- Public GitHub event stream
+- Repository intelligence
+- System/API status
+- Terminal-style activity log
 
-This is a dependency-free static build.
+### Projects
+- Active / Idle / Archived filters
+- Repository-backed project list
+- Project search
+- Repository inspector drawer
 
-```bash
-python3 -m http.server 8000
+### Repositories
+- Name / visibility / branch / language
+- Open item count
+- Last push time
+- Direct GitHub link
+- On-demand latest commit inspection
+
+### Activity
+- Push
+- Create / Delete
+- Pull Request
+- Issue
+- Star / Fork
+- Release and other public event signals
+
+### Deployments
+- On-demand scan of recent GitHub Actions workflow runs
+- Status / branch / SHA / updated time
+
+### Issues
+- Repository-level open item summary
+- On-demand open issue search
+
+### Search / Command
+- Local workspace search
+- `Cmd/Ctrl + K` command palette
+- Quick repository inspector
+
+## GitHub connection
+
+### Phase 01 — current
+The browser uses the GitHub **public REST API** for public repository and event data.
+
+No Personal Access Token is embedded in the frontend and no secret is stored in localStorage.
+
+To reduce unauthenticated API usage:
+- Core repository/event data is cached in `sessionStorage` for 3 minutes.
+- Commit history is fetched only when a repository inspector is opened.
+- Issues and Actions are fetched only when requested.
+
+### Phase 02 — authenticated control
+Next architecture:
+
+```text
+9W // CONTROL
+      |
+      +-- Frontend
+      |
+      +-- Server / Edge API
+              |
+              +-- GitHub App
+                    |
+                    +-- Private repositories
+                    +-- File read/write
+                    +-- Commit
+                    +-- Branch
+                    +-- Pull Request
+                    +-- Issues
+                    +-- GitHub Actions
+                    +-- Webhooks
 ```
 
-Open `http://localhost:8000`.
+GitHub App credentials must stay server-side. The frontend should never contain an installation token, client secret, or PAT.
 
-It can also be served directly with GitHub Pages from the repository root.
+## Deployment
 
-## Architecture direction
+`.github/workflows/pages.yml` deploys the static application to GitHub Pages on pushes to `main`.
 
-### Phase 01 — Console shell
+## Files
 
-- Overview
-- Projects
-- Repositories
-- Activity
-- Deployments
-- Issues
-- Command palette
+```text
+index.html                 Application shell / views
+style.css                  Console design system / responsive UI
+app.js                     Routing / GitHub API / rendering / interaction
+.github/workflows/pages.yml GitHub Pages deployment
+```
 
-### Phase 02 — Authenticated GitHub App
+## Design direction
 
-The current prototype uses GitHub's public API and therefore only exposes public workspace data. The production version should use a GitHub App rather than embedding a personal access token in the frontend.
+- Background: near-black `#070707`
+- Thin grey grid/borders
+- Sparse state colors only
+- Sans UI + monospace data
+- Desktop-first, responsive down to mobile
+- Data itself acts as the visual system
 
-Planned authenticated modules:
+---
 
-- Private repositories
-- File browser
-- File editor
-- Branch creation
-- Diff / commit
-- Pull requests
-- Issues
-- GitHub Actions runs, jobs and logs
-- Failed workflow retry
-
-### Phase 03 — Studio project metadata
-
-GitHub remains the source of truth for code. Separate project metadata can later be stored in Supabase:
-
-- Client / project name
-- Production URL
-- Figma URL
-- Admin URL
-- Platform
-- Status
-- Tags
-- Notes
-
-## Visual system
-
-- Background: `#080808`
-- Panel: `#0D0D0D`
-- Border: `#242424`
-- Main text: `#F1F1F1`
-- Status colors are reserved for system state only.
-
-The UI intentionally avoids dashboard-card decoration and uses tables, logs, grids and mono typography as the primary visual language.
+`9W // CONTROL` / Studio Development System
