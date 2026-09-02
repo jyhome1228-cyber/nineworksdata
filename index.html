@@ -9,6 +9,7 @@
   <meta name="description" content="GitHub project workspace and studio control dashboard" />
   <link rel="stylesheet" href="./style.css" />
   <link rel="stylesheet" href="./typography.css" />
+  <link rel="stylesheet" href="./site-links.css" />
 </head>
 <body>
   <div class="scanlines" aria-hidden="true"></div>
@@ -59,7 +60,7 @@
             <h2>WORKING PROJECTS</h2>
           </div>
           <div class="board-tools">
-            <label class="search"><span>/</span><input id="dashboardSearch" placeholder="프로젝트 검색" /></label>
+            <label class="search"><span>/</span><input id="dashboardSearch" placeholder="프로젝트 · 도메인 검색" /></label>
             <button class="ghost mono" id="syncButton">SYNC ↻</button>
           </div>
         </div>
@@ -70,7 +71,7 @@
         <div class="page-head"><div><p class="eyebrow mono">02 / PROJECT MATRIX</p><h1>PROJECTS.</h1></div><span class="page-count mono" id="projectCountLabel">-- TRACKED</span></div>
         <div class="filter-row">
           <div class="segments" id="projectFilters"><button class="active" data-filter="all">ALL</button><button data-filter="active">ACTIVE</button><button data-filter="idle">IDLE</button><button data-filter="noted">NOTED</button></div>
-          <label class="search"><span>/</span><input id="projectSearch" placeholder="프로젝트 검색" /></label>
+          <label class="search"><span>/</span><input id="projectSearch" placeholder="프로젝트 · 도메인 검색" /></label>
         </div>
         <div class="project-grid project-grid-full" id="projectGrid"></div>
       </section>
@@ -98,7 +99,7 @@
 
   <div class="command" id="command" aria-hidden="true">
     <div class="command-box">
-      <div class="command-input"><span class="mono">&gt;</span><input id="commandInput" placeholder="프로젝트 또는 메뉴 검색…" /><kbd>ESC</kbd></div>
+      <div class="command-input"><span class="mono">&gt;</span><input id="commandInput" placeholder="프로젝트 또는 도메인 검색…" /><kbd>ESC</kbd></div>
       <div id="commandResults" class="command-results"></div>
     </div>
   </div>
