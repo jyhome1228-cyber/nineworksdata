@@ -26,6 +26,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Build data together with the latest dashboard bundle so UI and snapshot stay in sync.
       - name: Build enriched GitHub project snapshots
         env:
           GH_TOKEN: ${{ github.token }}
