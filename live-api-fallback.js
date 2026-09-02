@@ -12,8 +12,6 @@
     headers:{'Content-Type':'application/json; charset=utf-8','X-9W-Source':source}
   });
 
-  const textResponse=(text,status=200)=>new Response(text,{status,headers:{'Content-Type':'text/plain; charset=utf-8'}});
-
   const utf8Base64=(text='')=>{
     const bytes=new TextEncoder().encode(String(text));
     let binary='';
@@ -27,7 +25,7 @@
 
   async function loadJson(path,fallback){
     try{
-      const response=await nativeFetch(`${path}${path.includes('?')?'&':'?'}v=live3`,{cache:'no-store'});
+      const response=await nativeFetch(`${path}${path.includes('?')?'&':'?'}v=live4`,{cache:'no-store'});
       if(!response.ok)throw new Error(`fallback ${response.status}`);
       return await response.json();
     }catch(error){
@@ -57,7 +55,7 @@
     const key=url.href;
     if(liveCache.has(key))return jsonResponse(liveCache.get(key),200,'memory');
     const controller=new AbortController();
-    const timer=setTimeout(()=>controller.abort(),4500);
+    const timer=setTimeout(()=>controller.abort(),4200);
     try{
       const response=await nativeFetch(input,{...(init||{}),signal:controller.signal,cache:'no-store'});
       if(response.ok){
@@ -65,7 +63,6 @@
           const data=await response.clone().json();
           liveCache.set(key,data);
         }catch{}
-        return response;
       }
       return response;
     }catch(error){
@@ -80,11 +77,21 @@
     const candidates=[branch,'main','master'].filter((v,i,a)=>v&&a.indexOf(v)===i);
     for(const ref of candidates){
       try{
-        const url=`https://raw.githubusercontent.com/${OWNER}/${encodeURIComponent(repo)}/${encodeURIComponent(ref)}/${path.split('/').map(encodeURIComponent).join('/')}`;
-        const response=await nativeFetch(url,{cache:'no-store'});
+        const rawPath=path.split('/').map(encodeURIComponent).join('/');
+        const rawUrl=`https://raw.githubusercontent.com/${OWNER}/${encodeURIComponent(repo)}/${encodeURIComponent(ref)}/${rawPath}`;
+        const response=await nativeFetch(rawUrl,{cache:'no-store'});
         if(response.ok)return await response.text();
       }catch{}
     }
+    return null;
+  }
+
+  function repoFromLiveState(name){
+    try{
+      if(typeof state!=='undefined'&&Array.isArray(state.repos)){
+        return state.repos.find(repo=>String(repo.name).toLowerCase()===String(name).toLowerCase())||null;
+      }
+    }catch{}
     return null;
   }
 
@@ -93,60 +100,82 @@
     try{url=new URL(typeof input==='string'?input:input.url,location.href)}catch{return nativeFetch(input,init)}
     if(url.hostname!=='api.github.com')return nativeFetch(input,init);
 
-    const live=await liveFirst(input,init,url);
-    if(live?.ok)return live;
-
     const path=decodeURIComponent(url.pathname);
 
+    // The project index still uses the original live GitHub API first.
     if(path===`/users/${OWNER}/repos`){
+      const live=await liveFirst(input,init,url);
+      if(live?.ok)return live;
       const repos=await reposPromise;
-      if(repos.length)return jsonResponse(repos);
+      if(repos.length)return jsonResponse(repos,200,'fallback');
       return live||jsonResponse({message:'GitHub API unavailable'},503);
     }
 
     if(path===`/users/${OWNER}/events/public`){
+      const live=await liveFirst(input,init,url);
+      if(live?.ok)return live;
       const events=await eventsPromise;
-      return jsonResponse(events||[]);
+      return jsonResponse(events||[],200,'fallback');
     }
 
     const match=path.match(new RegExp(`^/repos/${OWNER}/([^/]+)(?:/(.*))?$`,'i'));
-    if(!match)return live||nativeFetch(input,init);
+    if(!match)return nativeFetch(input,init);
 
     const requestedName=match[1];
     const tail=match[2]||'';
     const snapshot=await projectSnapshot(requestedName);
-    if(!snapshot)return live||jsonResponse({message:'Fallback unavailable'},503);
-
-    const repo=snapshot.repo||{};
+    const liveRepo=repoFromLiveState(requestedName);
+    const repo=liveRepo||snapshot?.repo||{};
     const branch=repo.default_branch||'main';
 
-    if(!tail)return jsonResponse(repo);
-    if(tail==='commits')return jsonResponse(snapshot.commits||[]);
-    if(tail.startsWith('git/trees/'))return jsonResponse({sha:'fallback',url:'',tree:snapshot.tree||[],truncated:!!snapshot.tree_truncated});
+    // Metadata is already present in the live project index, so don't spend another API request.
+    if(!tail){
+      if(Object.keys(repo).length)return jsonResponse(repo,200,liveRepo?'live-index':'fallback');
+      const live=await liveFirst(input,init,url);
+      return live||jsonResponse({message:'Repository unavailable'},503);
+    }
 
+    // README / CNAME / file contents come directly from raw.githubusercontent.com,
+    // which does not consume the unauthenticated REST quota.
     if(tail==='readme'){
-      if(snapshot.readme_text)return jsonResponse(contentObject(snapshot.readme_text,'README.md'));
-      const raw=await rawFile(requestedName,'README.md',branch);
-      if(raw!==null)return jsonResponse(contentObject(raw,'README.md'));
-      return jsonResponse({message:'Not Found'},404);
+      for(const readmeName of ['README.md','README.MD','readme.md','README']){
+        const raw=await rawFile(requestedName,readmeName,branch);
+        if(raw!==null)return jsonResponse(contentObject(raw,readmeName),200,'raw');
+      }
+      if(snapshot?.readme_text)return jsonResponse(contentObject(snapshot.readme_text,'README.md'),200,'fallback');
+      return jsonResponse(contentObject(repo.description||'README.md가 없는 프로젝트입니다. GitHub 메타데이터는 정상 연결되어 있습니다.','README.md'),200,'metadata');
     }
 
     if(tail==='contents/CNAME'){
-      if(snapshot.cname)return jsonResponse(contentObject(snapshot.cname,'CNAME'));
       const raw=await rawFile(requestedName,'CNAME',branch);
-      if(raw!==null)return jsonResponse(contentObject(raw,'CNAME'));
+      if(raw!==null)return jsonResponse(contentObject(raw,'CNAME'),200,'raw');
+      if(snapshot?.cname)return jsonResponse(contentObject(snapshot.cname,'CNAME'),200,'fallback');
       return jsonResponse({message:'Not Found'},404);
     }
 
     if(tail.startsWith('contents/')){
       const filePath=tail.slice('contents/'.length);
-      if(snapshot.package_path&&filePath===snapshot.package_path)return jsonResponse(contentObject(snapshot.package_text||'',filePath));
-      if(snapshot.index_path&&filePath===snapshot.index_path)return jsonResponse(contentObject(snapshot.index_text||'',filePath));
       const raw=await rawFile(requestedName,filePath,branch);
-      if(raw!==null)return jsonResponse(contentObject(raw,filePath));
-      return live||jsonResponse({message:'Not Found'},404);
+      if(raw!==null)return jsonResponse(contentObject(raw,filePath),200,'raw');
+      if(snapshot?.package_path&&filePath===snapshot.package_path)return jsonResponse(contentObject(snapshot.package_text||'',filePath),200,'fallback');
+      if(snapshot?.index_path&&filePath===snapshot.index_path)return jsonResponse(contentObject(snapshot.index_text||'',filePath),200,'fallback');
+      return jsonResponse({message:'Not Found'},404);
     }
 
+    // Only commits and recursive tree spend live REST quota; both are cached in-memory.
+    if(tail==='commits'){
+      const live=await liveFirst(input,init,url);
+      if(live?.ok)return live;
+      return jsonResponse(snapshot?.commits||[],200,'fallback');
+    }
+
+    if(tail.startsWith('git/trees/')){
+      const live=await liveFirst(input,init,url);
+      if(live?.ok)return live;
+      return jsonResponse({sha:'fallback',url:'',tree:snapshot?.tree||[],truncated:!!snapshot?.tree_truncated},200,'fallback');
+    }
+
+    const live=await liveFirst(input,init,url);
     return live||jsonResponse({message:'GitHub API unavailable'},503);
   };
 
