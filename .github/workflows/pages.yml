@@ -4,8 +4,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  schedule:
-    - cron: '*/10 * * * *'
 
 permissions:
   contents: read
@@ -25,25 +23,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      # Build data together with the latest dashboard bundle so UI and snapshot stay in sync.
-      - name: Build enriched GitHub project snapshots
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          python3 scripts/build_snapshot.py
-          test -s data/repos.json
-          test -s data/manifest.json
-          echo "snapshot files: $(find data/projects -type f | wc -l)"
-
       - name: Configure Pages
         uses: actions/configure-pages@v5
-
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
