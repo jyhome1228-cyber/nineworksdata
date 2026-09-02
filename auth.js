@@ -1,7 +1,7 @@
 (()=>{
   const EXPECTED='09910fdc87ececd02b0d164e9166f3bdc17488e1827b600bd3c65e6cbf4dbc9f';
   const SESSION_KEY='9w-control-auth-v1';
-  const scripts=['./app.js','./domain-hints.js','./save-animation.js'];
+  const scripts=['./app.js','./domain-hints.js','./save-animation.js','./inspector.js'];
   const messages=[
     'kernel.auth :: awaiting credential',
     'github.adapter :: link standby',
