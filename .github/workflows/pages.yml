@@ -26,28 +26,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build GitHub project snapshot
+      - name: Build enriched GitHub project snapshots
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p data
-          curl -fsSL \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${GH_TOKEN}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/users/jyhome1228-cyber/repos?per_page=100&sort=pushed&direction=desc&type=owner" \
-            > data/repos.json
-
-          curl -fsSL \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${GH_TOKEN}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/users/jyhome1228-cyber/events/public?per_page=30" \
-            > data/events.json || echo '[]' > data/events.json
-
-          jq -e 'type == "array"' data/repos.json >/dev/null
-          jq -e 'type == "array"' data/events.json >/dev/null
-          echo "snapshot repos=$(jq length data/repos.json) events=$(jq length data/events.json)"
+          python3 scripts/build_snapshot.py
+          test -s data/repos.json
+          test -s data/manifest.json
+          echo "snapshot files: $(find data/projects -type f | wc -l)"
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
